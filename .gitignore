@@ -162,5 +162,17 @@ cython_debug/
 #.idea/
 todo.md
 my_todo.md
-my_venv/
-lara_projects_venv/
+collaborative_venv/
+
+# --- Movie Recommendation Specifics ---
+# Ignore the data folder (CSVs are too big for GitHub)
+
+
+# Ignore the models folder (Pickle files are too big)
+models/
+
+# Ignore Mac system files
+.DS_Store
+
+# Ensure your specific venv name is covered
+collaborative_venv/
