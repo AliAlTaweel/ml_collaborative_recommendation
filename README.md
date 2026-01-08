@@ -571,9 +571,7 @@ in the Software without restriction...
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/movie-recommender/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/movie-recommender/discussions)
-- **Email**: your.email@example.com
+- **Email**: alihaltaweel89@gmail.com
 
 ## 🗺️ Roadmap
 
@@ -590,7 +588,7 @@ in the Software without restriction...
 
 ## 📈 Version History
 
-- **1.0.0** (2024-01-08)
+- **1.0.0** (2026-01-08)
   - Initial release
   - KNN-based recommendations
   - CLI and API interfaces
@@ -599,4 +597,4 @@ in the Software without restriction...
 
 ---
 
-**Made with ❤️ by Your Name**
+**Made by Ali Al-Taweel**
