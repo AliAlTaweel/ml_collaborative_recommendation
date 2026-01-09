@@ -87,13 +87,13 @@ data/
 
 ```bash
 # 1. Train the model (first time only)
-python -m movie_recommender.main --train
+python -m src.main --train
 
 # 2. Get recommendations
-python -m movie_recommender.main --movie "Toy Story"
+python -m src.main --movie "Toy Story"
 
 # 3. Or start the API server
-uvicorn movie_recommender.api:app --reload
+uvicorn app:app --reload
 
 # 4. Visit http://localhost:8000/docs for API documentation
 ```
@@ -109,6 +109,7 @@ python -m movie_recommender.main --train
 ```
 
 **What happens during training:**
+
 1. Loads movies and ratings data from CSV files
 2. Creates a user-movie rating matrix
 3. Filters movies with >10 votes and users with >50 ratings
@@ -117,6 +118,7 @@ python -m movie_recommender.main --train
 6. Saves model to `models/` directory
 
 **Output:**
+
 ```
 2024-01-08 10:00:00 - INFO - Loading movies from data/movies.csv
 2024-01-08 10:00:01 - INFO - Loaded 9742 movies and 100836 ratings
@@ -134,6 +136,7 @@ python -m movie_recommender.main --movie "Toy Story"
 ```
 
 **Output:**
+
 ```
 Recommendations for 'Toy Story':
     Title                                    Distance
@@ -152,6 +155,7 @@ python -m movie_recommender.main --interactive
 ```
 
 **Interactive session:**
+
 ```
 === Movie Recommendation System ===
 Type 'quit' to exit
@@ -190,10 +194,11 @@ python -m movie_recommender.main --help
 
 ```bash
 # Development mode with auto-reload
-uvicorn movie_recommender.api:app --reload
+uvicorn app:app --reload
+
 
 # Production mode
-uvicorn movie_recommender.api:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn app:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 The API will be available at `http://localhost:8000`
@@ -205,6 +210,7 @@ The API will be available at `http://localhost:8000`
 **POST** `/api/v1/recommendations`
 
 Request:
+
 ```bash
 curl -X POST "http://localhost:8000/api/v1/recommendations" \
   -H "Content-Type: application/json" \
@@ -215,6 +221,7 @@ curl -X POST "http://localhost:8000/api/v1/recommendations" \
 ```
 
 Response:
+
 ```json
 {
   "query": "Toy Story",
@@ -241,6 +248,7 @@ curl http://localhost:8000/health
 ```
 
 Response:
+
 ```json
 {
   "status": "healthy",
@@ -257,6 +265,7 @@ curl http://localhost:8000/
 ```
 
 Response:
+
 ```json
 {
   "message": "Movie Recommender API",
@@ -324,13 +333,14 @@ CSR_MATRIX_PATH = MODELS_DIR / "csr_matrix.npz"
 
 ### movies.csv
 
-| Column   | Type   | Description                    |
-|----------|--------|--------------------------------|
-| movieId  | int    | Unique movie identifier        |
-| title    | string | Movie title with year          |
-| genres   | string | Pipe-separated list of genres  |
+| Column  | Type   | Description                   |
+| ------- | ------ | ----------------------------- |
+| movieId | int    | Unique movie identifier       |
+| title   | string | Movie title with year         |
+| genres  | string | Pipe-separated list of genres |
 
 **Example:**
+
 ```csv
 movieId,title,genres
 1,Toy Story (1995),Animation|Children|Comedy
@@ -340,14 +350,15 @@ movieId,title,genres
 
 ### ratings.csv
 
-| Column    | Type  | Description                |
-|-----------|-------|----------------------------|
-| userId    | int   | Unique user identifier     |
-| movieId   | int   | Movie identifier           |
-| rating    | float | Rating (0.5 to 5.0)        |
-| timestamp | int   | Unix timestamp             |
+| Column    | Type  | Description            |
+| --------- | ----- | ---------------------- |
+| userId    | int   | Unique user identifier |
+| movieId   | int   | Movie identifier       |
+| rating    | float | Rating (0.5 to 5.0)    |
+| timestamp | int   | Unix timestamp         |
 
 **Example:**
+
 ```csv
 userId,movieId,rating,timestamp
 1,1,4.0,964982703
@@ -362,11 +373,13 @@ The system uses **K-Nearest Neighbors (KNN)** with collaborative filtering:
 ### How it works:
 
 1. **Data Preparation:**
+
    - Create user-movie rating matrix
    - Filter movies (>10 votes) and users (>50 ratings)
    - Convert to sparse matrix (CSR format) for efficiency
 
 2. **Model Training:**
+
    - Use cosine similarity as distance metric
    - Build KNN index with brute force algorithm
    - Find 20 nearest neighbors for each movie
@@ -414,6 +427,7 @@ pytest tests/test_recommender.py::TestMovieRecommender::test_train -v
 ```
 
 **Example output:**
+
 ```
 tests/test_recommender.py::TestDataProcessor::test_prepare_dataset PASSED
 tests/test_recommender.py::TestDataProcessor::test_load_data_file_not_found PASSED
@@ -426,6 +440,7 @@ tests/test_recommender.py::TestMovieRecommender::test_untrained_model_error PASS
 ```
 
 View coverage report:
+
 ```bash
 open htmlcov/index.html  # Mac
 xdg-open htmlcov/index.html  # Linux
@@ -479,6 +494,7 @@ Once the API server is running, visit:
 - **OpenAPI JSON**: http://localhost:8000/openapi.json
 
 The interactive documentation allows you to:
+
 - Explore all API endpoints
 - Test requests directly from the browser
 - View request/response schemas
@@ -487,21 +503,25 @@ The interactive documentation allows you to:
 ## ⚡ Performance Considerations
 
 ### Memory Efficiency:
+
 - Uses **scipy sparse matrices** (CSR format)
 - Only stores non-zero ratings
 - Typical memory usage: ~100-500 MB for 1M ratings
 
 ### Speed Optimizations:
+
 - **Parallel processing**: `n_jobs=-1` uses all CPU cores
 - **Model persistence**: Avoids retraining (load time <1 second)
 - **Brute force KNN**: Exact results, fast for datasets <10K movies
 
 ### Scalability:
+
 - **Current scale**: Handles 10K movies, 100K users, 10M ratings
 - **For larger datasets**: Consider approximate KNN (Annoy, FAISS)
 - **Production**: Use model caching, load balancing, async processing
 
 ### Benchmarks:
+
 - Training time: ~5-30 seconds (depending on dataset size)
 - Prediction time: <100ms per request
 - API throughput: ~100 requests/second (single worker)
@@ -511,31 +531,37 @@ The interactive documentation allows you to:
 Contributions are welcome! Please follow these steps:
 
 1. **Fork the repository**
+
    ```bash
-   git clone https://github.com/yourusername/movie-recommender.git
+   git clone .....
    ```
 
 2. **Create a feature branch**
+
    ```bash
    git checkout -b feature/amazing-feature
    ```
 
 3. **Make your changes**
+
    - Add new features
    - Fix bugs
    - Improve documentation
 
 4. **Run tests**
+
    ```bash
    pytest tests/ -v
    ```
 
 5. **Commit your changes**
+
    ```bash
    git commit -m 'Add amazing feature'
    ```
 
 6. **Push to the branch**
+
    ```bash
    git push origin feature/amazing-feature
    ```
@@ -543,6 +569,7 @@ Contributions are welcome! Please follow these steps:
 7. **Open a Pull Request**
 
 ### Code Style:
+
 - Follow PEP 8 guidelines
 - Add type hints
 - Write docstrings for functions

@@ -1,7 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from src.data_preprocessing import get_preprocessed_data
 from src.recommender import get_movie_recommendation
-import pandas as pd
 
 app = FastAPI(title="Movie Recommender API")
 
@@ -13,7 +11,10 @@ def read_root():
 def recommend(movie_name: str):
     # Call your existing logic
     result = get_movie_recommendation(movie_name)
-        
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Movie not found")
+
     return {"result": result}
 
 # To run this, use the command: uvicorn app:app --reload
