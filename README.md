@@ -284,16 +284,17 @@ movie-recommender/
 ├── data/
 │   ├── movies.csv              # Movie metadata
 │   └── ratings.csv             # User ratings
-├── movie_recommender/
+├── src/
 │   ├── __init__.py             # Package initialization
 │   ├── config.py               # Configuration settings
 │   ├── data_processor.py       # Data loading and processing
 │   ├── recommender.py          # Recommendation engine
-│   ├── main.py                 # CLI entry point
-│   └── api.py                  # FastAPI REST API
+│   └── main.py                 # CLI entry point
+├── app.py                      # FastAPI REST API entry point
 ├── tests/
 │   ├── __init__.py
-│   └── test_recommender.py     # Unit tests
+│   ├── conftest.py             # Test configuration
+│   └── test_main.py            # Unit tests
 ├── models/                     # Saved models (auto-created)
 ├── logs/                       # Log files (auto-created)
 ├── requirements.txt            # Python dependencies
@@ -306,7 +307,7 @@ movie-recommender/
 
 ## ⚙️ Configuration
 
-Edit `movie_recommender/config.py` to customize:
+Edit `src/config.py` to customize:
 
 ```python
 # Data files

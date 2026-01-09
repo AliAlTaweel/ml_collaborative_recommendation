@@ -1,5 +1,5 @@
 run:
-	python source/main.py
+	python3 app.py
 
 test:
 	pytest tests/
